@@ -1,5 +1,5 @@
 {
-  description = "Resume";
+  description = "NLP Project";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/release-21.05";

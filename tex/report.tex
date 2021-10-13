@@ -1,92 +1,46 @@
-\documentclass[a4paper,12pt]{article}
-\usepackage{graphicx}
-\usepackage{authblk}
-\usepackage{hyperref}
+\documentclass[11pt,a4paper]{article}
+\usepackage[hyperref]{acl2020}
+\usepackage{times}
+\usepackage{latexsym}
+\renewcommand{\UrlFont}{\ttfamily\small}
+\usepackage{microtype}
+\newcommand\BibTeX{B\textsc{ib}\TeX}
 
-\title{Definition Prediction Based on Etymology}
-\author[1]{Noah Gardner}
-\date{$9/24/2021$}
-\affil[1]{College of Computing and Software Engineering, Kennesaw State University}
+\aclfinalcopy % Uncomment this line for the final submission
+\title{Etymologic Embeddings for Improved Definition Modeling}
+\author{Noah Gardner \\
+  Kennesaw State University \\
+  College of Computing and Software Engineering \\
+  \texttt{ngardn10@students.kennesaw.edu} \\}
 
 \begin{document}
 \maketitle
-
-\section{Abstract}
-There are many different methods to extract the defition of a word given
-information about it besides the definition. Sometimes, the definition can be
-extracted from the context of the word, but the context is not always available.
-In every case, however, the word itself is available, and we if we can find the
-etymology used to build the word, we have a good hint of the definition of the
-word. Automically generated definitions could lower the cost of crowd-sourced
-annotations. This research proposes a method to extract the definition of a word
-by parsing the etymology of the word.
+\begin{abstract}
+  This document contains the instructions for preparing a manuscript for the
+  proceedings of ACL 2020. The document itself conforms to its own
+  specifications, and is therefore an example of what your manuscript should
+  look like. These instructions should be used for both papers submitted for
+  review and for final versions of accepted papers. Authors are asked to conform
+  to all the directions reported in this document.
+\end{abstract}
 
 \section{Introduction}
-Wiktionary\footnote{wiktionary.org} is an online dictionary that provides
-details about many words, including etymology, definition, pronounciation, and
-examples. Wiktionary also supports many different languages. Some research has
-used data dumped from Wikitionary to support NLP research such as etymology
-prediction and word sense disambiguation.
+\citet{wu_computational_2020}
 
-The etymology of a word is a tree structure that describes the word's origin.
-The tree is a series of nodes, each of which has a parent and a child. The root
-node is the word itself. The child nodes are the words that are used to build
-the word.
+\section{Related Work}
 
-\section{Literature Review}
-\begin{itemize}
-    \item[1] Computational Etymology and Word Emergence
-        \cite{wu_computational_2020}
-
-        Wu et al. describe a comprehensive Wikitionary parser that allows them
-        to predict the etymology of a word across multiple languages. They use a
-        LSTM model for three different experimental settings that explore the
-        relationship between words and their etymology. They also show their
-        model is capabable of predicting the parent language of a word given
-        it's relationship.
-
-    \item[2] Augmenting semantic lexicons using word embeddings and transfer
-        learning \cite{alshaabi_augmenting_2021}
-
-        Al-Shaabi et al. describe a method to augment the semantic lexicons of a
-        language using word embeddings and transfer learning. They argue that
-        lexicon-based models for sentiment analysis systems are more
-        interpretable and easier to use than contextual models. However, it can
-        be challenging to add sentiment information to new words in the lexicon.
-        They propose two models that are to predict sentiment scores using word
-        embeddings and transfer learning. Their methods show human-level
-        performance on a dataset of annotated sentiment scores.
-
-    \item[3] Deep contextualized word representations \cite{peters_deep_2018}
-
-        Peters et al. describe a deep representation model for words that can be
-        used across NLP tasks such as sentiment analysis and textual entailment.
-        They argue that high quality representations are difficult to learn, and
-        should ideally model characteristics of the word and how it's uses can
-        vary in different contexts. They propose a model that uses both forward
-        and backward contextualized word embeddings. Their methods obtain
-        benchmark results on main NLP tasks and can be incorporated into many
-        modern NLP systems.
-\end{itemize}
+\section{Overview}
 
 \section{Methodology}
-\subsection{Dataset}
-The dataset used for this project will come from \textit{Yawipa Data
-    Extract}\footnote{cs.jhu.edu/~winston/yawipa-data.html} dataset that parsed
-information on each word from Wiktionary, including definitions and
-etymology \cite{wu_computational_2020}.
 
-\subsection{Model}
-Given a supportive dataset and modern NLP algorithms, it may be possible to
-train a model to predict the definition of a word given the etymology of the
-word. The definitons will also come from the Wikitionary dataset but are also
-available from different datasets and API's.
+\section{Experimental Results}
 
-If it is impossible or proves too difficult to generate the definition of a
-word, then at least this project will attempt to provide statistical
-correlations between etymology and definitions.
+\section{Conclusion}
 
-\bibliographystyle{unsrt}
-\bibliography{report}
+\section*{Acknowledgments}
+This work was supported by computational resources provided by the Kennesaw
+State University Department of Electrical and Computer Engineering.
 
+\bibliography{report.bib}
+\bibliographystyle{acl_natbib}
 \end{document}

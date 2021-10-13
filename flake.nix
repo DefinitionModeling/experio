@@ -48,6 +48,13 @@
                 scheme-small
                 latexmk
                 latexindent
+
+                preprint
+                algorithmicx
+
+                # fonts
+                helvetic
+                courier
                 ;
             })
           ];

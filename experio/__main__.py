@@ -1,13 +1,21 @@
 """Experio main entrypoint."""
 
-import logging
+from rich import inspect
 
-logger = logging.getLogger(__name__)
+from experio.console import console
+from experio.dataset import DefinitionDataset, EtymologyDataset
 
 
 def main():
-    logger.info('Experio')
+    """Run main program."""
+    console.log('Experio')
+
+    def_data = DefinitionDataset()
+    console.log(len(def_data.raw))
+
+    etym_data = EtymologyDataset()
+    console.log(len(etym_data.raw))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

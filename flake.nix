@@ -27,6 +27,7 @@
           inherit python projectDir overrides;
           propogatedBuildInputs = [
             # Non-Python runtime dependencies go here
+            pkgs.ipfs
           ];
         };
 
@@ -35,11 +36,13 @@
         devShell = pkgs.mkShell {
           inputsFrom = builtins.attrValues self.packages.${system};
           buildInputs = [
+            # other
+            pkgs.ipfs
+
             # python
             (pkgs.poetry2nix.mkPoetryEnv {
               inherit python projectDir overrides;
             })
-            pkgs.python39Packages.poetry
             python
 
             # tex

@@ -6,6 +6,7 @@ result/**
 # custom
 .vscode
 .direnv
+data
 
 # python
 # Byte-compiled / optimized / DLL files

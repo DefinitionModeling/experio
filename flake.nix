@@ -39,6 +39,7 @@
             (pkgs.poetry2nix.mkPoetryEnv {
               inherit python projectDir overrides;
             })
+            pkgs.julia_16-bin
             python
 
             # tex
@@ -57,6 +58,11 @@
                 ;
             })
           ];
+
+          shellHook = ''
+            export PYTHON="${python}/bin/python"
+            export JULIA_PROJECT="."
+          '';
         };
       });
 }

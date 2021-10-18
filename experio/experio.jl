@@ -1,7 +1,6 @@
 
-function open_file(path)
-    f = open(path, "r")
-    s = read(f, String)
-    close(f)
-    return s
+using Yawipa
+
+function imported()
+    # println("Hello World")
 end

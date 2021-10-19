@@ -77,16 +77,23 @@ end
 # ╔═╡ 7b8e6d2f-1e65-4647-93ac-649e765455b5
 function clean_etym(df)
 	gdf = groupby(df, :word)
-	return combine(gdf, :etym => join => :etym)
+	return combine(gdf, :etym => first => :etym)
 end
 
 # ╔═╡ d4311972-a821-40be-982a-fb915d24ffce
 etym_clean = clean_etym(etym_df)
 
+# ╔═╡ 8830fb0d-9edf-4ff2-ab2a-3fd16186b693
+function col_join(strings)
+	# use join with space delim
+	return join(strings, " ")
+end
+
 # ╔═╡ d28976f1-c1e3-4f1a-a2c5-4eb81fe9875d
 function clean_def(df)
-	gdf = groupby(df, [:word, :pos])
-	return combine(gdf, :def => join => :def)
+	fdf = filter(:pos => !=("Proper noun"), df)
+	gdf = groupby(fdf, [:word, :pos])
+	return combine(gdf, :def => col_join => :def)
 end
 
 # ╔═╡ dfbe48df-e71e-45f2-9f56-7f0e37a0fdc7
@@ -112,6 +119,7 @@ TODO:
 # ╠═e9ddaa82-11e1-4bc2-98cd-ec01c881f343
 # ╠═7b8e6d2f-1e65-4647-93ac-649e765455b5
 # ╠═d4311972-a821-40be-982a-fb915d24ffce
+# ╠═8830fb0d-9edf-4ff2-ab2a-3fd16186b693
 # ╠═d28976f1-c1e3-4f1a-a2c5-4eb81fe9875d
 # ╠═dfbe48df-e71e-45f2-9f56-7f0e37a0fdc7
 # ╠═4a3f6b0f-2cb7-4fe1-a5f8-5b48c01101a8

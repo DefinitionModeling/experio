@@ -111,20 +111,31 @@ dataset for the word \textit{free}.
 
 \subsection{Etymology}
 
-\begin{figure}
-  \color{blue}free \color{black}[\color{green}(eng|free)\color{blue}(root)\color{red}(eng|ine-pro|*preyH-)\color{black}]
-  \caption{Parsed wikitionary example etymology for the english word
-    \textit{free}.}
-  \label{fig:wiktionary_etymology}
-\end{figure}
-
 Similar to the definition dataset, the etymology dataset includes information on
 the source language, the word to be analyzed, and the etymology of the word. The
 etymology is a tree structure that describes the word's origin, including roots
 from other languages. Figure \ref{fig:wiktionary_etymology} shows an example
 etymology from the dataset for the word \textit{free}.
 
+\begin{figure}[h]
+  \color{blue}free \color{black}[\color{green}(eng|free)\color{blue}(root)\color{red}(eng|ine-pro|*preyH-)\color{black}]
+  \caption{Parsed wikitionary example etymology for the english word
+    \textit{free}.}
+  \label{fig:wiktionary_etymology}
+\end{figure}
+
 \section{Methodology}
+
+From the definition and etymology datasets, we use only the words with the
+english source language. For the defintions, we remove self-referential
+defintions and utilize a maximum of three definitions per word. Although the
+context-based definitions may provide some benefit for a context-based model, we
+remove the context from the definitions. Additionally, the definition of some
+words are completely context (such as alternate spellings) and are also removed.
+For the etymologies, we use only the first etymology for each word if there
+exist multiple. Finally, we ignore words tagged with \textit{proper noun}.
+Dataset statistics are shown in Figure \ref{fig:dataset_stats} after the
+described steps are applied.
 
 \begin{figure}[h]
   \begin{tabular}{|l|l|}
@@ -140,16 +151,6 @@ etymology from the dataset for the word \textit{free}.
   \caption{Dataset statistics for the combined datasets.}
   \label{fig:dataset_stats}
 \end{figure}
-
-From the definition and etymology datasets, we use only the words with the
-english source language. For the defintions, we remove self-referential
-defintions and utilize a maximum of three definitions per word. Although the
-context-based definitions may provide some benefit for a context-based model, we
-aren't interested in using this method for generating context-based definitions,
-so we remove them from the dataset. Additionally, the definition of some words
-are completely context-based, and are also removed. For the etymologies, we use
-only the first etymology for each word if there exist multiple. Dataset
-statistics are shown in Figure \ref{fig:dataset_stats}.
 
 \section{Experimental Results}
 

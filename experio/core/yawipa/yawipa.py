@@ -25,7 +25,7 @@ def parse(
     Parse the Yawipa wiktionary dump.
 
     Args:
-        dump (str): Path to wiktionary dump.
+        dump (str): Path to (decompressed) wiktionary dump.
         outfile (str): Path to output file.
         logfile (str): Path to log file.
         edition (str): Language code (en/fr).
@@ -36,6 +36,8 @@ def parse(
         \"{1}\",
         \"{2}\",
         \"{3}\",
+        \".*:.*\",
+        parsers=\"def,etym\",
     )
     """
     jl.eval(command.format(dump, edition, outfile, logfile))

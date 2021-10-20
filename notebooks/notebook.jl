@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.16.1
+# v0.16.3
 
 using Markdown
 using InteractiveUtils
@@ -9,7 +9,17 @@ begin
 	import Pkg
 	Pkg.activate("../.")
 	using DataFrames
+	using CSV
 end
+
+# ╔═╡ e745e13a-c7ba-4001-894c-c9fe421d2330
+CSV.read(
+	"../data/etym.txt",
+	DataFrame;
+	delim='\t',
+	header=false,
+	types=String,
+)
 
 # ╔═╡ 11b67007-f893-47e9-b2b7-28f8e7e0a865
 function extract_etym(path)
@@ -21,11 +31,8 @@ function extract_etym(path)
 		word = arr[2]
 		etym = string("[(", join(arr[5:end], ")("), ")]")
 		
-		if lang != "eng"
-			continue
-		end
-		
 		row = DataFrame(
+			lang=lang,
 			word=word,
 			etym=etym,
 		)
@@ -46,20 +53,9 @@ function extract_def(path)
 		pos = arr[3]
 		parser = arr[4]
 		def = join(arr[5:end])
-			
-		
-		
-		# ignore proper nouns
-		if pos == "Proper noun"
-			continue
-		end
-		
-		# ignore self referential definitions
-		if occursin(word, def)
-			continue
-		end
 		
 		row = DataFrame(
+			lang=lang,
 			word=word,
 			pos=pos,
 			def=def,
@@ -67,25 +63,24 @@ function extract_def(path)
 		
 		append!(res, row)
 	end
-	
 	return res
 end
 
 # ╔═╡ e14bb891-7912-474c-9fd3-7aafea58ecf3
 begin
-	etym_raw = "../data/etym.text"
+	etym_raw = "../data/etym.txt"
 	etym_df = extract_etym(etym_raw)
 end
 
 # ╔═╡ e9ddaa82-11e1-4bc2-98cd-ec01c881f343
-begin
-	def_raw = "../data/def.text"
-	def_df = extract_def(def_raw)
-end
+# begin
+# 	def_raw = "../data/def.txt"
+# 	def_df = extract_def(def_raw)
+# end
 
 # ╔═╡ 7b8e6d2f-1e65-4647-93ac-649e765455b5
 function clean_etym(df)
-	gdf = groupby(df, :word)
+	gdf = groupby(df, [:lang, :word])
 	return combine(gdf, :etym => first => :etym)
 end
 
@@ -120,9 +115,6 @@ end
 
 # ╔═╡ d28976f1-c1e3-4f1a-a2c5-4eb81fe9875d
 function clean_def(df)
-	# keep english sources
-	edf = filter(:lang => ==("eng"), df)
-	
 	# remove proper pronouns
 	pdf = filter(:pos => !=("Proper noun"), edf)
 	
@@ -153,6 +145,7 @@ TODO:
 
 # ╔═╡ Cell order:
 # ╠═4df79bd4-d5db-4bcf-8728-2fb3bbd9a657
+# ╠═e745e13a-c7ba-4001-894c-c9fe421d2330
 # ╠═11b67007-f893-47e9-b2b7-28f8e7e0a865
 # ╠═b665ea7e-0530-4bf6-afe8-b84fc3cce3a4
 # ╠═e14bb891-7912-474c-9fd3-7aafea58ecf3

@@ -10,150 +10,176 @@ begin
 	Pkg.activate("../.")
 	using DataFrames
 	using CSV
+	using Statistics
 end
-
-# ╔═╡ e745e13a-c7ba-4001-894c-c9fe421d2330
-CSV.read(
-	"../data/etym.txt",
-	DataFrame;
-	delim='\t',
-	header=false,
-	types=String,
-)
 
 # ╔═╡ 11b67007-f893-47e9-b2b7-28f8e7e0a865
-function extract_etym(path)
-	res = DataFrame()
-	for line in eachline(path)
-		arr = split(line, '\t')
+BASE_PATH = "../data/"
+
+# ╔═╡ f4fdf007-5662-4310-9d34-3f47278148a9
+function load_csv(path, name, builder;from_txt=true, rebuild=false)
+	csv_path = string(path, name, ".csv")
+	
+	if !isfile(csv_path) || rebuild
+		if from_txt
+			txt_path = string(path, name, ".txt")
+			df = builder(txt_path)
+		else
+			df = builder()
+		end
 		
-		lang = arr[1]
-		word = arr[2]
-		etym = string("[(", join(arr[5:end], ")("), ")]")
-		
-		row = DataFrame(
-			lang=lang,
-			word=word,
-			etym=etym,
-		)
-		
-		append!(res, row)
+		CSV.write(csv_path, df)
+		return dropmissing(df)
 	end
-	return res
+		
+	res = CSV.read(csv_path, DataFrame;types=String)
+	return dropmissing(res)
 end
 
-# ╔═╡ b665ea7e-0530-4bf6-afe8-b84fc3cce3a4
-function extract_def(path)
-	res = DataFrame()
-	for line in eachline(path)
-		arr = split(line, '\t')
-		
-		lang = arr[1]
-		word = arr[2]
-		pos = arr[3]
-		parser = arr[4]
-		def = join(arr[5:end])
-		
-		row = DataFrame(
-			lang=lang,
-			word=word,
-			pos=pos,
-			def=def,
-		)
-		
-		append!(res, row)
+# ╔═╡ d2a6afb9-7887-4617-aca8-00cbfe4e15a9
+function load_def(;path=BASE_PATH)
+	function build_def(path)
+		res = DataFrame()
+		for line in eachline(path)
+			arr = split(line, '\t')
+
+			lang = arr[1]
+			word = arr[2]
+			pos = arr[3]
+			parser = arr[4]
+			def = join(arr[5:end])
+
+			row = DataFrame(
+				lang=lang,
+				word=word,
+				pos=pos,
+				def=def,
+			)
+
+			append!(res, row)
+		end
+		return res
 	end
-	return res
+	return load_csv(path, "def", build_def)
 end
 
-# ╔═╡ e14bb891-7912-474c-9fd3-7aafea58ecf3
-begin
-	etym_raw = "../data/etym.txt"
-	etym_df = extract_etym(etym_raw)
-end
+# ╔═╡ 2f89a1c4-2c68-4251-8436-b37ef1fa2ed2
+function load_etym(;path=BASE_PATH)
+	function build_etym(path)
+		res = DataFrame()
+		for line in eachline(path)
+			arr = split(line, '\t')
 
-# ╔═╡ e9ddaa82-11e1-4bc2-98cd-ec01c881f343
-# begin
-# 	def_raw = "../data/def.txt"
-# 	def_df = extract_def(def_raw)
-# end
+			lang = arr[1]
+			word = arr[2]
+			etym = string("[(", join(arr[5:end], ")("), ")]")
+
+			row = DataFrame(
+				lang=lang,
+				word=word,
+				etym=etym,
+			)
+
+			append!(res, row)
+		end
+		return res
+	end
+	return load_csv(path, "etym", build_etym)
+end
 
 # ╔═╡ 7b8e6d2f-1e65-4647-93ac-649e765455b5
 function clean_etym(df)
-	gdf = groupby(df, [:lang, :word])
+	fdf = filter(:lang => ==("eng"), df)
+	gdf = groupby(fdf, [:word])
 	return combine(gdf, :etym => first => :etym)
 end
 
-# ╔═╡ d4311972-a821-40be-982a-fb915d24ffce
-etym_clean = clean_etym(etym_df)
-
-# ╔═╡ 2e5c3c1f-2192-4301-b5c7-51c4462ee80e
-begin
-	function max_entries(x, num)
-		# limit number of entries in x to num
-		if size(x)[1] > num
-			return x[1:num]
-		end
-		return x
-	end
-	
-	function remove_context(x)
-		# remove definition contexts that are wrapped in double curly brace
-		return replace(x, r"{{.*}}\s"=>"")
-	end
-	
+# ╔═╡ d28976f1-c1e3-4f1a-a2c5-4eb81fe9875d
+function clean_def(df)
 	function clean_def_group(x)
-		# given a group of definitions, apply the above functions
-		x = remove_context(x)
+		function max_entries(x, num)
+			# limit number of entries in x to num
+			if size(x)[1] > num
+				return x[1:num]
+			end
+			return x
+		end
 		
 		# limit to three definitions per word
 		x = max_entries(x, 3)
 		
 		return x
 	end
-end
-
-# ╔═╡ d28976f1-c1e3-4f1a-a2c5-4eb81fe9875d
-function clean_def(df)
+	
+	# filter non-english
+	fdf = filter(:lang => ==("eng"), df)
+	
 	# remove proper pronouns
-	pdf = filter(:pos => !=("Proper noun"), edf)
+	pdf = filter(:pos => !=("Proper noun"), fdf)
 	
-	# remove self referential definitions
+	# remove definition contexts
+	reg = r"{{.*}}\s"
+	rdf = transform(pdf, :def => ByRow(x -> replace(x, reg=>"")) => :def)
 	
-	
-	# remove definition context
-	
-	
-	gdf = groupby(edf, [:word])
+	# apply clean_def_group function to each word group
+	gdf = groupby(rdf, [:word])
 	return combine(gdf, :def => (x -> clean_def_group(x)) => :def)
 end
 
-# ╔═╡ dfbe48df-e71e-45f2-9f56-7f0e37a0fdc7
-def_clean = clean_def(def_df)
+# ╔═╡ 99908e74-1516-450f-9977-309b9b2fc938
+function load_dataset(name;path=BASE_PATH)
+	function build_dataset()
+		edf = load_etym()
+		ddf = load_def()
 
-# ╔═╡ 4a3f6b0f-2cb7-4fe1-a5f8-5b48c01101a8
-innerjoin(etym_clean, def_clean, on=:word)
+		cedf = clean_etym(edf)
+		cddf = clean_def(ddf)
+		return innerjoin(cedf, cddf, on=:word)
+	end
+	return load_csv(path, "final", build_dataset; from_txt=false)
+end
 
-# ╔═╡ a4489e55-b75d-47f7-b404-17d86ece04f5
-md"""
-TODO:
-1. drop proper nouns
-2. remove curly braces from definition type
-3. remove other types of definitions? recursive definitions?
-4. concat definitions from every part of speech?
-"""
+# ╔═╡ 0737d9fd-3c0e-4aa5-a474-38b7bfac2045
+final = load_dataset("final")
+
+# ╔═╡ b87aef52-3a0c-4f35-9b9f-75f201a8aeaf
+# number of definitions
+num_def = size(final)[1]
+
+# ╔═╡ 5bb3bf23-e382-4d8c-b369-8441accb3793
+# vocabulary (unique)
+vocab = size(unique(final, :word)[!, :word])[1]
+
+# ╔═╡ 8b0c5a9e-b243-45e3-85a0-8841574b14ed
+# average definitions per word
+num_def/vocab
+
+# ╔═╡ a22934f9-d54f-4a5b-a714-530c150d1656
+# average etymology length
+begin
+	elengths = select(final, :etym => ByRow(x->length(x)) => :etym_length)
+	mean(elengths[!, :etym_length])
+end
+
+# ╔═╡ 75e8debb-dab3-4733-9586-5c081e817f5c
+# average definitions length
+begin
+	dlengths = select(final, :def => ByRow(x->length(x)) => :def_length)
+	mean(dlengths[!, :def_length])
+end
 
 # ╔═╡ Cell order:
 # ╠═4df79bd4-d5db-4bcf-8728-2fb3bbd9a657
-# ╠═e745e13a-c7ba-4001-894c-c9fe421d2330
 # ╠═11b67007-f893-47e9-b2b7-28f8e7e0a865
-# ╠═b665ea7e-0530-4bf6-afe8-b84fc3cce3a4
-# ╠═e14bb891-7912-474c-9fd3-7aafea58ecf3
-# ╠═e9ddaa82-11e1-4bc2-98cd-ec01c881f343
+# ╠═f4fdf007-5662-4310-9d34-3f47278148a9
+# ╠═d2a6afb9-7887-4617-aca8-00cbfe4e15a9
+# ╠═2f89a1c4-2c68-4251-8436-b37ef1fa2ed2
 # ╠═7b8e6d2f-1e65-4647-93ac-649e765455b5
-# ╠═d4311972-a821-40be-982a-fb915d24ffce
-# ╠═2e5c3c1f-2192-4301-b5c7-51c4462ee80e
 # ╠═d28976f1-c1e3-4f1a-a2c5-4eb81fe9875d
-# ╠═dfbe48df-e71e-45f2-9f56-7f0e37a0fdc7
-# ╠═4a3f6b0f-2cb7-4fe1-a5f8-5b48c01101a8
-# ╠═a4489e55-b75d-47f7-b404-17d86ece04f5
+# ╠═99908e74-1516-450f-9977-309b9b2fc938
+# ╠═0737d9fd-3c0e-4aa5-a474-38b7bfac2045
+# ╠═b87aef52-3a0c-4f35-9b9f-75f201a8aeaf
+# ╠═5bb3bf23-e382-4d8c-b369-8441accb3793
+# ╠═8b0c5a9e-b243-45e3-85a0-8841574b14ed
+# ╠═a22934f9-d54f-4a5b-a714-530c150d1656
+# ╠═75e8debb-dab3-4733-9586-5c081e817f5c

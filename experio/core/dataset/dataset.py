@@ -30,7 +30,10 @@ class Dataset(object):
         self.base_path = base_path
         self.file_path = '{0}.txt'.format(Path(self.base_path) / self.name)
 
-        self.raw = self.load()
+        # download text file
+        if not Path(self.file_path).is_file():
+            console.log('Dataset not found.')
+            self.download()
 
     def download(self) -> None:
         """Download dataset."""
@@ -51,9 +54,3 @@ class Dataset(object):
                 reporthook=report_hook(tq),
                 data=None,
             )
-
-    def load(self) -> None:
-        """Load dataset."""
-        if not Path(self.file_path).is_file():
-            console.log('Dataset not found.')
-            self.download()

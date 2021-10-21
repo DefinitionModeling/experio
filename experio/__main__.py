@@ -2,16 +2,15 @@
 
 from rich import inspect
 
-from experio.console import console
-from experio.dataset import DefinitionDataset, EtymologyDataset
+from experio.display import display
+from experio.core.dataset.experio import EtymDefDataset
 
 
 def main():
     """Run main program."""
-    console.log('Experio')
-
-    DefinitionDataset()
-    EtymologyDataset()
+    display()
+    dataset = EtymDefDataset()
+    inspect(dataset)
 
 
 if __name__ == '__main__':

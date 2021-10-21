@@ -3,8 +3,11 @@
 from pathlib import Path
 from urllib.request import urlretrieve
 
+from tqdm import tqdm
+
 from experio import const
 from experio.console import console
+from experio.core.dataset.download import report_hook
 
 
 class Dataset(object):
@@ -31,8 +34,23 @@ class Dataset(object):
 
     def download(self) -> None:
         """Download dataset."""
-        console.log('Downloading {0}'.format(self.url))
-        urlretrieve(self.url, self.file_path)
+        console.log(
+            'Downloading "{0}" to {1}.'.format(self.url, self.file_path),
+        )
+        # progress bar
+        with tqdm(
+            unit='B',
+            unit_scale=True,
+            unit_divisor=1024,
+            miniters=1,
+            desc=self.file_path,
+        ) as tq:
+            urlretrieve(
+                self.url,
+                filename=self.file_path,
+                reporthook=report_hook(tq),
+                data=None,
+            )
 
     def load(self) -> None:
         """Load dataset."""

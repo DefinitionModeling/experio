@@ -8,5 +8,7 @@ ignore = [
     # names
     N813,
     # urls
-    S310
+    S310,
+    # nest funcs
+    WPS430
 ]

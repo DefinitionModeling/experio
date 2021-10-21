@@ -1,16 +1,15 @@
 """Experio main entrypoint."""
 
-from rich import inspect
-
+from experio.console import console
+from experio.dataset import EtymDefDataset
 from experio.display import display
-from experio.core.dataset.experio import EtymDefDataset
 
 
 def main():
     """Run main program."""
     display()
-    dataset = EtymDefDataset()
-    inspect(dataset)
+    ds = EtymDefDataset()
+    console.log(ds.dataset())
 
 
 if __name__ == '__main__':

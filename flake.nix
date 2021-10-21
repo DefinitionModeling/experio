@@ -48,6 +48,7 @@
                 experio = ./.;
               };
             })
+            pkgs.poetry
             pkgs.julia_16-bin
 
             # tex

@@ -3,9 +3,6 @@ function imported()
     println("Hello from Julia!")
 end
 
-import Pkg
-Pkg.activate("../.")
-
 using Arrow
 using CSV
 using DataFrames

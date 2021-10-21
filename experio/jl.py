@@ -18,12 +18,13 @@ class Julia(object):
     def __init__(self):
         """Initialize Julia class."""
         self.julia = Main
+        cwd = Path(__file__).parent
 
         console.log('Instantiating packages.')
-        self.eval('using Pkg; Pkg.instantiate()')
+        command = 'using Pkg; Pkg.activate("{0}"); Pkg.instantiate()'
+        self.eval(command.format(cwd.parent))
 
         console.log('Loading julia module.')
-        cwd = Path(__file__).parent
         self.eval('include(\"{0}\")'.format(cwd / 'experio.jl'))
 
     def eval(self, code: str):

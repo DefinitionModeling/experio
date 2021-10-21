@@ -1,6 +1,7 @@
 """Module for dataset object."""
 
 from pathlib import Path
+from typing import Optional
 from urllib.request import urlretrieve
 
 from tqdm import tqdm
@@ -17,13 +18,18 @@ class Dataset(object):
     url: str
     base_path: str
 
-    def __init__(self, name: str, url: str, base_path: str = const.BASE_PATH):
+    def __init__(
+        self,
+        name: str,
+        url: str,
+        base_path: Optional[str] = const.BASE_PATH,
+    ):
         """Initialize dataset object.
 
         Args:
             name (str): Name of dataset.
             url (str): URL of dataset.
-            base_path (str): Base path of dataset.
+            base_path (Optional[str]): Base path of the dataset.
         """
         self.name = name
         self.url = url

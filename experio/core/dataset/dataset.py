@@ -1,9 +1,14 @@
 """Module for dataset object."""
 
 from pathlib import Path
+from typing import Optional
 from urllib.request import urlretrieve
 
+from tqdm import tqdm
+
+from experio import const
 from experio.console import console
+from experio.core.dataset.download import report_hook
 
 
 class Dataset(object):
@@ -13,38 +18,45 @@ class Dataset(object):
     url: str
     base_path: str
 
-    def __init__(self, name: str, url: str, base_path: str = 'data/'):
+    def __init__(
+        self,
+        name: str,
+        url: str,
+        base_path: Optional[str] = const.BASE_PATH,
+    ):
         """Initialize dataset object.
 
         Args:
             name (str): Name of dataset.
             url (str): URL of dataset.
-            base_path (str): Base path of dataset.
+            base_path (Optional[str]): Base path of the dataset.
         """
         self.name = name
         self.url = url
         self.base_path = base_path
-        self.file_path = '{0}.text'.format(Path(self.base_path) / self.name)
+        self.file_path = '{0}.txt'.format(Path(self.base_path) / self.name)
 
-        # make base path if it doesn't exist
-        Path(self.base_path).mkdir(parents=True, exist_ok=True)
-        self.raw = self.load()
-
-    def download(self):
-        """Download dataset."""
-        console.log('Downloading {0}'.format(self.url))
-        urlretrieve(self.url, self.file_path)
-
-    def load(self) -> str:
-        """Load dataset.
-
-        Returns:
-            str: Dataset content.
-        """
+        # download text file
         if not Path(self.file_path).is_file():
             console.log('Dataset not found.')
             self.download()
 
-        with open(self.file_path, 'r') as fi:
-            console.log('Opening {0}...'.format(self.file_path))
-            return fi.read()
+    def download(self) -> None:
+        """Download dataset."""
+        console.log(
+            'Downloading "{0}" to {1}.'.format(self.url, self.file_path),
+        )
+        # progress bar
+        with tqdm(
+            unit='B',
+            unit_scale=True,
+            unit_divisor=1024,
+            miniters=1,
+            desc=self.file_path,
+        ) as tq:
+            urlretrieve(
+                self.url,
+                filename=self.file_path,
+                reporthook=report_hook(tq),
+                data=None,
+            )

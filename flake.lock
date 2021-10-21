@@ -1,18 +1,37 @@
 {
   "nodes": {
-    "compat": {
-      "flake": false,
+    "devshell-flake": {
       "locked": {
-        "lastModified": 1627913399,
-        "narHash": "sha256-hY8g6H2KFL8ownSiFeMOjwPC8P0ueXpCVEbxgda3pko=",
-        "owner": "edolstra",
-        "repo": "flake-compat",
-        "rev": "12c64ca55c1014cdc1b16ed5a804aa8576601ff2",
+        "lastModified": 1632436039,
+        "narHash": "sha256-OtITeVWcKXn1SpVEnImpTGH91FycCskGBPqmlxiykv4=",
+        "owner": "numtide",
+        "repo": "devshell",
+        "rev": "7a7a7aa0adebe5488e5abaec688fd9ae0f8ea9c6",
         "type": "github"
       },
       "original": {
-        "owner": "edolstra",
-        "repo": "flake-compat",
+        "owner": "numtide",
+        "repo": "devshell",
+        "type": "github"
+      }
+    },
+    "gitignore": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1634151530,
+        "narHash": "sha256-l1wnu/jSxhj6+MGurKupKkWZh3Om/6FuYc/FdSlkyRI=",
+        "owner": "hercules-ci",
+        "repo": "gitignore.nix",
+        "rev": "9e80c4d83026fa6548bc53b1a6fab8549a6991f6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "gitignore.nix",
         "type": "github"
       }
     },
@@ -34,7 +53,8 @@
     },
     "root": {
       "inputs": {
-        "compat": "compat",
+        "devshell-flake": "devshell-flake",
+        "gitignore": "gitignore",
         "nixpkgs": "nixpkgs",
         "utils": "utils"
       }

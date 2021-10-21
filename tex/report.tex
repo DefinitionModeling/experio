@@ -5,9 +5,10 @@
 \renewcommand{\UrlFont}{\ttfamily\small}
 \usepackage{microtype}
 \newcommand\BibTeX{B\textsc{ib}\TeX}
+\usepackage{xcolor}
 
 \aclfinalcopy % Uncomment this line for the final submission
-\title{Etymologic Embeddings for Improved Definition Modeling}
+\title{Etymological Embeddings for Contexless Definition Modeling}
 \author{Noah Gardner \\
   Kennesaw State University \\
   College of Computing and Software Engineering \\
@@ -16,22 +17,140 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-  This document contains the instructions for preparing a manuscript for the
-  proceedings of ACL 2020. The document itself conforms to its own
-  specifications, and is therefore an example of what your manuscript should
-  look like. These instructions should be used for both papers submitted for
-  review and for final versions of accepted papers. Authors are asked to conform
-  to all the directions reported in this document.
+  Definition modeling is the problem of estimating the probability of an output
+  definition given an input word embedding. There exist some methods of creating
+  word embeddings concatenated that take the input word concatenated with the
+  context of the word. However, the context is not always available.
+  Additionally, progress has been made in research for \textit{etymology
+    modeling} where the etymology of a word can be estimated from the input word
+  embedding. In this paper, we propose a definition modeling method that uses
+  etymological information.
 \end{abstract}
 
 \section{Introduction}
-\citet{wu_computational_2020}
+Word embeddings are vector representations of words that allow us to use words
+as inputs to machine learning models for natural language processing tasks
+\cite{mikolov_efficient_2013}. There are many word embedding methods that
+achieve state-of-the-art performance on NLP problems, such as sentiment
+analysis. Addtionally, contextualized word embeddings have been shown to improve
+performance with models such as ELMo and BERT \cite{peters_deep_2018,
+  devlin_bert_2019}.
+
+Dictionary definitions can yield value for sentiment aware models, however,
+crowdsourced annoations are costly. The task of definition modeling was proposed
+to address this problem. The goal of definition modeling is to estimate the
+probability of an output definition given an input word embedding
+\cite{noraset_definition_2016}.
+
+Wiktionary\footnote{wiktionary.org} is a free online dictionary that provides
+details about many words, including definitions, etymologies, pronounciation,
+and examples. Some research has used the large data dumped from Wikitionary to
+support NLP research such as etymology modeling and word sense disambiguation
+\cite{wu_computational_2020}.
+
+The etymology of a word is a tree structure that describes the word's origin.
+Although contextualized embeddings show improvement in NLP tasks, the context of
+a word is not always available. With advances in etymology modeling, if we know
+the source language of a word, we can predict the etymology of the word. Using
+this observation, we propose a word embedding with etymological information for
+the task of definition modeling. This work intends to show improvement for
+contextless definition modeling, although it may be used in conjuction with a
+contextualized embedding for even better performance.
 
 \section{Related Work}
 
+Definition modeling was intially described by \citet{noraset_definition_2016}.
+Their research is based on a recurrent neural network language model
+\cite{mikolov_recurrent_2010} with a modified recurrent unit. They use the word
+to be defined placed at the beginning of the definition so the model will see
+the word only on the first step.
+
+\citet{chang_what_2019} explore contextualized embedding for definition
+modeling. They reformulate the problem of definition modeling from text
+generation to text classification. Their results show state-of-the-art
+performance on the task of definition modeling.
+
+\citet{washio_bridging_2019} proposed a method for context-based definition
+modeling that considers the semantic relations between both the word to be
+defined and the words in the definition. They apply semantic information to both
+the definition encoder and decoder.
+
+\citet{barba_exemplification_2021} introduce exemplification modeling, an
+adjacent problem to definition modeling that uses a definition embedding to
+generate possible example sentences. They use a sequence-to-sequence based
+approach and show near human-level annotation performance. Their problem is
+similar in that they use the definition as context to create example sentences.
+
 \section{Overview}
+In this section, we investigate the parsed wikitionary dump from
+\citet{wu_computational_2020} and discuss the relevant aspects of the
+dataset.
+
+\subsection{Definition}
+
+\begin{figure}[h]
+  \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Word} & \textbf{Definition}             \\
+    \hline\hline
+    free          & $(lb|en|social)$ Unconstrained. \\
+    free          & Not imprisoned or enslaved.     \\
+    free          & Generous; liberal.              \\
+    \hline
+  \end{tabular}
+  \caption{Parsed wikitionary example definitions for the english word
+    \textit{free}.}
+  \label{fig:wiktionary_definitions}
+\end{figure}
+
+The definition dataset includes information on the source language, the word to
+be defined, the part of speech, and the defintion of the word. The definition of
+a word can also contain a specific context in which the definition is used.
+Figure \ref{fig:wiktionary_definitions} shows some example definitions from the
+dataset for the word \textit{free}.
+
+\subsection{Etymology}
+
+Similar to the definition dataset, the etymology dataset includes information on
+the source language, the word to be analyzed, and the etymology of the word. The
+etymology is a tree structure that describes the word's origin, including roots
+from other languages. Figure \ref{fig:wiktionary_etymology} shows an example
+etymology from the dataset for the word \textit{free}.
+
+\begin{figure}[h]
+  \color{blue}free \color{black}[\color{green}(eng|free)\color{blue}(root)\color{red}(eng|ine-pro|*preyH-)\color{black}]
+  \caption{Parsed wikitionary example etymology for the english word
+    \textit{free}.}
+  \label{fig:wiktionary_etymology}
+\end{figure}
 
 \section{Methodology}
+
+From the definition and etymology datasets, we use only the words with the
+english source language. For the defintions, we remove self-referential
+defintions and utilize a maximum of three definitions per word. Although the
+context-based definitions may provide some benefit for a context-based model, we
+remove the context from the definitions. Additionally, the definition of some
+words are completely context (such as alternate spellings) and are also removed.
+For the etymologies, we use only the first etymology for each word if there
+exist multiple. Finally, we ignore words tagged with \textit{proper noun}.
+Dataset statistics are shown in Figure \ref{fig:dataset_stats} after the
+described steps are applied.
+
+\begin{figure}[h]
+  \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Type}                & \textbf{Amount} \\
+    \hline\hline
+    Unique Words                 & \textbf{320855} \\
+    Average Definitions Per Word & \textbf{1.288}  \\
+    Etymology (Average Length)   & \textbf{41.725} \\
+    Definition (Average Length)  & \textbf{51.711} \\
+    \hline
+  \end{tabular}
+  \caption{Dataset statistics for the combined datasets.}
+  \label{fig:dataset_stats}
+\end{figure}
 
 \section{Experimental Results}
 

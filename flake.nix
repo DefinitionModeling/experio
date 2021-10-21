@@ -4,18 +4,25 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/d189bf92f9be23f9b0f6c444f6ae29351bb7125c";
     utils = { url = "github:numtide/flake-utils"; };
-    compat = { url = "github:edolstra/flake-compat"; flake = false; };
+    devshell-flake = { url = "github:numtide/devshell"; };
+    gitignore = {
+      url = "github:hercules-ci/gitignore.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, utils, compat }:
+  outputs = { self, nixpkgs, utils, devshell-flake, gitignore }:
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
           inherit system;
+          overlays = [
+            devshell-flake.overlay
+          ];
         };
 
         python = pkgs.python39;
-        projectDir = ./.;
+        projectDir = gitignore.lib.gitignoreSource ./.;
         overrides = pkgs.poetry2nix.overrides.withDefaults (final: prev: {
           # Python dependency overrides go here
         });
@@ -32,14 +39,17 @@
 
         defaultPackage = self.packages.${system}.${packageName};
 
-        devShell = pkgs.mkShell {
-          inputsFrom = builtins.attrValues self.packages.${system};
-          buildInputs = [
+        devShell = with pkgs; devshell.mkShell {
+          packages = [
             # python
             (pkgs.poetry2nix.mkPoetryEnv {
               inherit python projectDir overrides;
+              editablePackageSources = {
+                experio = ./.;
+              };
             })
-            python
+            pkgs.poetry
+            pkgs.julia_16-bin
 
             # tex
             (pkgs.texlive.combine {
@@ -57,6 +67,20 @@
                 ;
             })
           ];
+
+          commands = [{
+            name = "pluto";
+            category = "Julia";
+            command = ''
+              eval $(echo "julia -e 'import Pkg; Pkg.activate(\".\"); using Pluto; Pluto.run()'")
+            '';
+            help = "launch pluto server";
+          }];
+
+          env = [{
+            name = "JULIA_PROJECT";
+            value = ".";
+          }];
         };
       });
 }

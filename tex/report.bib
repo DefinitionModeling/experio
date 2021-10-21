@@ -1,8 +1,3 @@
-@misc{wiktionary,
-  title   = {Wiktionary},
-  url     = {https://www.wiktionary.org/},
-  urldate = {2021-09-24}
-}
 
 @inproceedings{wu_computational_2020,
   title     = {Computational Etymology and Word Emergence},
@@ -28,9 +23,22 @@
   isbn      = {979-10-95546-34-4}
 }
 
+@article{mikolov_efficient_2013,
+  title    = {Efficient {Estimation} of {Word} {Representations} in {Vector} {Space}},
+  url      = {http://arxiv.org/abs/1301.3781},
+  abstract = {We propose two novel model architectures for computing continuous vector representations of words from very large data sets. The quality of these representations is measured in a word similarity task, and the results are compared to the previously best performing techniques based on different types of neural networks. We observe large improvements in accuracy at much lower computational cost, i.e. it takes less than a day to learn high quality word vectors from a 1.6 billion words data set. Furthermore, we show that these vectors provide state-of-the-art performance on our test set for measuring syntactic and semantic word similarities.},
+  urldate  = {2021-10-19},
+  journal  = {arXiv:1301.3781 [cs]},
+  author   = {Mikolov, Tomas and Chen, Kai and Corrado, Greg and Dean, Jeffrey},
+  month    = sep,
+  year     = {2013},
+  note     = {arXiv: 1301.3781},
+  keywords = {Computer Science - Computation and Language}
+}
+
 @article{alshaabi_augmenting_2021,
   title    = {Augmenting semantic lexicons using word embeddings and transfer
-  learning},
+learning},
   url      = {http://arxiv.org/abs/2109.09010},
   abstract = {Sentiment-aware intelligent systems are essential to a wide array of
   applications including marketing, political campaigns, recommender systems,
@@ -67,6 +75,7 @@
   Networks, Physics - Physics and Society}
 }
 
+% elmo
 @article{peters_deep_2018,
   title    = {Deep contextualized word representations},
   url      = {http://arxiv.org/abs/1802.05365},
@@ -94,3 +103,163 @@
   Language}
 }
 
+% bert
+@article{devlin_bert_2019,
+  title      = {{BERT}: {Pre}-training of {Deep} {Bidirectional} {Transformers} for {Language} {Understanding}},
+  shorttitle = {{BERT}},
+  url        = {http://arxiv.org/abs/1810.04805},
+  abstract   = {We introduce a new language representation model called BERT,
+  which stands for Bidirectional Encoder Representations from Transformers.
+  Unlike recent language representation models, BERT is designed to pre-train
+  deep bidirectional representations from unlabeled text by jointly conditioning
+  on both left and right context in all layers. As a result, the pre-trained
+  BERT model can be fine-tuned with just one additional output layer to create
+  state-of-the-art models for a wide range of tasks, such as question answering
+  and language inference, without substantial task-specific architecture
+  modifications. BERT is conceptually simple and empirically powerful. It
+  obtains new state-of-the-art results on eleven natural language processing
+  tasks, including pushing the GLUE score to 80.5\% (7.7\% point absolute
+  improvement), MultiNLI accuracy to 86.7\% (4.6\% absolute improvement), SQuAD
+  v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and
+  SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).},
+  urldate    = {2021-10-19},
+  journal    = {arXiv:1810.04805 [cs]},
+  author     = {Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
+  month      = may,
+  year       = {2019},
+  note       = {arXiv: 1810.04805},
+  keywords   = {Computer Science - Computation and Language}
+}
+
+% definition modeling
+@article{noraset_definition_2016,
+  title      = {Definition {Modeling}: {Learning} to define word embeddings in natural language},
+  shorttitle = {Definition {Modeling}},
+  url        = {http://arxiv.org/abs/1612.00394},
+  abstract   = {Distributed representations of words have been shown to capture
+  lexical semantics, as demonstrated by their effectiveness in word similarity
+  and analogical relation tasks. But, these tasks only evaluate lexical
+  semantics indirectly. In this paper, we study whether it is possible to
+  utilize distributed representations to generate dictionary definitions of
+  words, as a more direct and transparent representation of the embeddings'
+  semantics. We introduce definition modeling, the task of generating a
+  definition for a given word and its embedding. We present several definition
+  model architectures based on recurrent neural networks, and experiment with
+  the models over multiple data sets. Our results show that a model that
+  controls dependencies between the word being defined and the definition words
+  performs significantly better, and that a character-level convolution layer
+  designed to leverage morphology can complement word-level embeddings. Finally,
+  an error analysis suggests that the errors made by a definition model may
+  provide insight into the shortcomings of word embeddings.},
+  urldate    = {2021-10-19},
+  journal    = {arXiv:1612.00394 [cs]},
+  author     = {Noraset, Thanapon and Liang, Chen and Birnbaum, Larry and Downey, Doug},
+  month      = dec,
+  year       = {2016},
+  note       = {arXiv: 1612.00394},
+  keywords   = {Computer Science - Computation and Language}
+}
+
+% exemplification modeling
+@inproceedings{barba_exemplification_2021,
+  address    = {Montreal, Canada},
+  title      = {Exemplification {Modeling}: {Can} {You} {Give} {Me} an {Example}, {Please}?},
+  isbn       = {9780999241196},
+  shorttitle = {Exemplification {Modeling}},
+  url        = {https://www.ijcai.org/proceedings/2021/520},
+  doi        = {10.24963/ijcai.2021/520},
+  abstract   = {Recently, generative approaches have been used effectively to
+	provide definitions of words in their context. However, the opposite, i.e.,
+	generating a usage example given one or more words along with their
+	definitions, has not yet been investigated. In this work, we introduce the
+	novel task of Exemplification Modeling (ExMod), along with a
+	sequence-to-sequence architecture and a training procedure for it. Starting
+	from a set of (word, definition) pairs, our approach is capable of
+	automatically generating high-quality sentences which express the requested
+	semantics. As a result, we can drive the creation of sense-tagged data which
+	cover the full range of meanings in any inventory of interest, and their
+	interactions within sentences. Human annotators agree that the sentences
+	generated are as fluent and semantically-coherent with the input definitions
+	as the sentences in manually-annotated corpora. Indeed, when employed as
+	training data for Word Sense Disambiguation, our examples enable the current
+	state of the art to be outperformed, and higher results to be achieved than
+	when using gold-standard datasets only. We release the pretrained model, the
+	dataset and the software at https://github.com/SapienzaNLP/exmod.},
+  language   = {en},
+  urldate    = {2021-10-19},
+  booktitle  = {Proceedings of the {Thirtieth} {International} {Joint} {Conference} on {Artificial} {Intelligence}},
+  publisher  = {International Joint Conferences on Artificial Intelligence Organization},
+  author     = {Barba, Edoardo and Procopio, Luigi and Lacerra, Caterina and Pasini, Tommaso and Navigli, Roberto},
+  month      = aug,
+  year       = {2021},
+  pages      = {3779--3785}
+}
+
+
+
+@inproceedings{washio_bridging_2019,
+  address    = {Hong Kong, China},
+  title      = {Bridging the {Defined} and the {Defining}: {Exploiting} {Implicit} {Lexical} {Semantic} {Relations} in {Definition} {Modeling}},
+  shorttitle = {Bridging the {Defined} and the {Defining}},
+  url        = {https://aclanthology.org/D19-1357},
+  doi        = {10.18653/v1/D19-1357},
+  abstract   = {Definition modeling includes acquiring word embeddings from
+	dictionary definitions and generating definitions of words. While the
+	meanings of defining words are important in dictionary definitions, it is
+	crucial to capture the lexical semantic relations between defined words and
+	defining words. However, thus far, the utilization of such relations has not
+	been explored for definition modeling. In this paper, we propose definition
+	modeling methods that use lexical semantic relations. To utilize implicit
+	semantic relations in definitions, we use unsupervisedly obtained
+	pattern-based word-pair embeddings that represent semantic relations of word
+	pairs. Experimental results indicate that our methods improve the
+	performance in learning embeddings from definitions, as well as definition
+	generation.},
+  urldate    = {2021-10-19},
+  booktitle  = {Proceedings of the 2019 {Conference} on {Empirical} {Methods} in {Natural} {Language} {Processing} and the 9th {International} {Joint} {Conference} on {Natural} {Language} {Processing} ({EMNLP}-{IJCNLP})},
+  publisher  = {Association for Computational Linguistics},
+  author     = {Washio, Koki and Sekine, Satoshi and Kato, Tsuneaki},
+  month      = nov,
+  year       = {2019},
+  pages      = {3521--3527}
+}
+
+% recurrent neural network language model
+@inproceedings{mikolov_recurrent_2010,
+  title     = {Recurrent neural network based language model},
+  url       = {http://www.isca-speech.org/archive/interspeech\_2010/i10\_1045.html},
+  urldate   = {2021-10-19},
+  booktitle = {{INTERSPEECH} 2010, 11th {Annual} {Conference} of the {International} {Speech} {Communication} {Association}, {Makuhari}, {Chiba}, {Japan}, {September} 26-30, 2010},
+  publisher = {ISCA},
+  author    = {Mikolov, Tomás and Karafiát, Martin and Burget, Lukás and Cernocký, Jan and Khudanpur, Sanjeev},
+  editor    = {Kobayashi, Takao and Hirose, Keikichi and Nakamura, Satoshi},
+  year      = {2010},
+  pages     = {1045--1048}
+}
+
+% contextualized embeddings
+@inproceedings{chang_what_2019,
+  address    = {Hong Kong, China},
+  title      = {What {Does} {This} {Word} {Mean}? {Explaining} {Contextualized} {Embeddings} with {Natural} {Language} {Definition}},
+  shorttitle = {What {Does} {This} {Word} {Mean}?},
+  url        = {https://aclanthology.org/D19-1627},
+  doi        = {10.18653/v1/D19-1627},
+  abstract   = {Contextualized word embeddings have boosted many NLP tasks
+  compared with traditional static word embeddings. However, the word with a
+  specific sense may have different contextualized embeddings due to its various
+  contexts. To further investigate what contextualized word embeddings capture,
+  this paper analyzes whether they can indicate the corresponding sense
+  definitions and proposes a general framework that is capable of explaining
+  word meanings given contextualized word embeddings for better interpretation.
+  The experiments show that both ELMo and BERT embeddings can be well
+  interpreted via a readable textual form, and the findings may benefit the
+  research community for a better understanding of what the embeddings
+  capture.},
+  urldate    = {2021-10-19},
+  booktitle  = {Proceedings of the 2019 {Conference} on {Empirical} {Methods} in {Natural} {Language} {Processing} and the 9th {International} {Joint} {Conference} on {Natural} {Language} {Processing} ({EMNLP}-{IJCNLP})},
+  publisher  = {Association for Computational Linguistics},
+  author     = {Chang, Ting-Yun and Chen, Yun-Nung},
+  month      = nov,
+  year       = {2019},
+  pages      = {6064--6070}
+}

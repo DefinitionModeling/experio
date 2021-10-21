@@ -1,8 +1,7 @@
 """Wiktionary datasets from yawipa."""
 
+from experio import const
 from experio.core.dataset.dataset import Dataset
-
-YAWIPA_URL = 'https://www.cs.jhu.edu/~winston/yawipa-data'
 
 
 class DefinitionDataset(Dataset):
@@ -13,7 +12,7 @@ class DefinitionDataset(Dataset):
         name = 'def'
         super().__init__(
             name=name,
-            url='{0}/{1}'.format(YAWIPA_URL, name),
+            url='{0}/{1}'.format(const.YAWIPA_URL, name),
         )
 
 
@@ -25,5 +24,5 @@ class EtymologyDataset(Dataset):
         name = 'etym'
         super().__init__(
             name=name,
-            url='{0}/{1}'.format(YAWIPA_URL, name),
+            url='{0}/{1}'.format(const.YAWIPA_URL, name),
         )

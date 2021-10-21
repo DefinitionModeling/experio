@@ -1,2 +1,14 @@
 [flake8]
-ignore = F401, S310, WPS323
+ignore = [
+    # imports
+    F401,
+    WPS433,
+    WPS440,
+    WPS458,
+    # names
+    N813,
+    # urls
+    S310,
+    # nest funcs
+    WPS430
+]

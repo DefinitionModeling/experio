@@ -8,7 +8,7 @@ using CSV
 using DataFrames
 using Statistics
 
-BASE_PATH = "../data/"
+BASE_PATH = "./data/"
 
 """
     Loads a CSV file into a DataFrame.

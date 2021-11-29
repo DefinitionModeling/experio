@@ -11,4 +11,6 @@ ignore = [
     S310,
     # nest funcs
     WPS430
+    # string concatenation
+    WPS336
 ]

@@ -77,10 +77,12 @@
             help = "launch pluto server";
           }];
 
-          env = [{
-            name = "JULIA_PROJECT";
-            value = ".";
-          }];
+          env = [
+            {
+              name = "JULIA_PROJECT";
+              value = ".";
+            }
+          ];
         };
       });
 }

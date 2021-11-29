@@ -8,6 +8,7 @@ result/**
 .direnv
 data
 logs
+models
 
 # python
 # Byte-compiled / optimized / DLL files

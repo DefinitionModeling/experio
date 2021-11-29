@@ -10,7 +10,9 @@ ignore = [
     # urls
     S310,
     # nest funcs
-    WPS430
+    WPS430,
     # string concatenation
-    WPS336
+    WPS336,
+    # string constant
+    WPS226,
 ]

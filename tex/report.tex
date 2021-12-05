@@ -6,9 +6,11 @@
 \usepackage{microtype}
 \newcommand\BibTeX{B\textsc{ib}\TeX}
 \usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{placeins}
 
 \aclfinalcopy % Uncomment this line for the final submission
-\title{Etymological Embeddings for Contexless Definition Modeling}
+\title{Etymological Embeddings for Contextless Definition Modeling}
 \author{Noah Gardner \\
   Kennesaw State University \\
   College of Computing and Software Engineering \\
@@ -82,13 +84,18 @@ approach and show near human-level annotation performance. Their problem is
 similar in that they use the definition as context to create example sentences.
 
 \section{Overview}
-In this section, we investigate the parsed wikitionary dump from
-\citet{wu_computational_2020} and discuss the relevant aspects of the
-dataset.
 
-\subsection{Definition}
+This section will provide an overview of the different works required to solve
+the problem of definition modeling with embeddings.
 
-\begin{figure}[h]
+\subsection{Raw Dataset}
+In this subsection, we investigate the parsed wikitionary dump from
+\citet{wu_computational_2020} and discuss the relevant aspects of the dataset.
+
+\subsubsection{Definition}
+
+\begin{table}[h]
+  \centering
   \begin{tabular}{|l|l|}
     \hline
     \textbf{Word} & \textbf{Definition}             \\
@@ -100,16 +107,16 @@ dataset.
   \end{tabular}
   \caption{Parsed wikitionary example definitions for the english word
     \textit{free}.}
-  \label{fig:wiktionary_definitions}
-\end{figure}
+  \label{tab:wiktionary_definitions}
+\end{table}
 
 The definition dataset includes information on the source language, the word to
 be defined, the part of speech, and the defintion of the word. The definition of
 a word can also contain a specific context in which the definition is used.
-Figure \ref{fig:wiktionary_definitions} shows some example definitions from the
+Figure \ref{tab:wiktionary_definitions} shows some example definitions from the
 dataset for the word \textit{free}.
 
-\subsection{Etymology}
+\subsubsection{Etymology}
 
 Similar to the definition dataset, the etymology dataset includes information on
 the source language, the word to be analyzed, and the etymology of the word. The
@@ -124,7 +131,41 @@ etymology from the dataset for the word \textit{free}.
   \label{fig:wiktionary_etymology}
 \end{figure}
 
+\subsection{Embeddings}
+
+In this subsection, we will investigate how we can create definition embeddings
+for definition modeling.
+
+\subsubsection{Universal Sentence Encoding}
+
+In order to create defintions, we need to obtain the embedding of the definition
+we wish to predict. We also must obtain embeddings of the input word and
+context. By using a pre-trained universal sentence encoder, we can obtain
+embeddings for both the inputs and the expected outputs.
+
+\subsubsection{Defintion Embedding Prediction}
+Once we have the input embeddings and expected output embeddings, we can train a
+model to predict the output embedding. In general, the problem of definition
+modelling is a text generation problem. We may also solve the problem as a
+classification task. That is, predict the closest definition in the dataset to
+the predicted embedding using a distance metric such as cosine similarity, the
+proposed approach of \citet{chang_what_2019}.
+
+In their experiments, after creating a contextualized embedding as well as a
+word embedding, both are used as inputs to a convolutional neural network. The
+resulting model is able to predict a definition embeddinggs for the given input.
+This approach allows them to avoid some of the pitfalls of text generation, such
+as problems associated with greedy search and generating grammatically correct
+sentences.
+
+With the predicted definition embedding, we compare the predicted embedding to
+definition embeddings in the dataset. Using an approach similar to the
+$k$-nearest neighbor algorithm, we may find $k$ definitions that are most
+similar to the predicted embedding.
+
 \section{Methodology}
+
+\subsection{Dataset}
 
 From the definition and etymology datasets, we use only the words with the
 english source language. For the defintions, we remove self-referential
@@ -132,12 +173,14 @@ defintions and utilize a maximum of three definitions per word. Although the
 context-based definitions may provide some benefit for a context-based model, we
 remove the context from the definitions. Additionally, the definition of some
 words are completely context (such as alternate spellings) and are also removed.
-For the etymologies, we use only the first etymology for each word if there
-exist multiple. Finally, we ignore words tagged with \textit{proper noun}.
-Dataset statistics are shown in Figure \ref{fig:dataset_stats} after the
-described steps are applied.
+Fue to background limitations, rather than use the entire etymology tree to
+generate our etymological embeddings, we use only the first etymology for each
+word if there exist multiple. Finally, we ignore words tagged with
+\textit{proper noun}. Dataset statistics are shown in Figure
+\ref{tab:dataset_stats} after the described steps are applied.
 
-\begin{figure}[h]
+\begin{table}[h]
+  \centering
   \begin{tabular}{|l|l|}
     \hline
     \textbf{Type}                & \textbf{Amount} \\
@@ -149,12 +192,93 @@ described steps are applied.
     \hline
   \end{tabular}
   \caption{Dataset statistics for the combined datasets.}
-  \label{fig:dataset_stats}
+  \label{tab:dataset_stats}
+\end{table}
+
+\subsection{Models}
+
+A simple sketch of the proposed approach can be found in Figure
+\ref{fig:proposed_approach}.
+
+\subsubsection{Encoder Model}
+BERT \cite{peters_deep_2018} is a commonly used encoder for the task of creating
+sentence embeddings due to it's ability to contextualize information with both
+forward and backward passes. However, we are working with limited resources and
+must choose a model with fewer parameters. Therefore, we have chosen the DeCLUTR
+model for unsupervised textual representation \cite{john_decluter_2020}. Aside
+from being readily accessible in the huggingface library, it is a useful model
+due to its unsupervised nature.
+
+\subsubsection{Prediction Model}
+As described in the Overview section, we are using a classification-based
+approach for definition modelling. After our word, definition, and etymology
+embeddings are created, we use a simple dense neural network with 3 hidden
+layers to predict the closest definition to the predicted embedding. In order to
+train the model, we select a set of unique words from the dataset and use them
+as the input words. The leftover set of words is used for testing. In other
+words, any word that appears in the training set is does not appear in the
+testing set.
+
+\subsubsection{Definition Selection}
+Once we have predicted a definition embedding, we use a distance metric to find
+the closest 3 definitions to the predicted embedding. We use cosine similarity
+as our distance metric and use an approach similar to the $k$-nearest neighbor
+algorithm. Unfortunately, most of the metrics used in definition modelling
+cannot be applied to this approach as the metrics expect a generated embedding
+rather than the complete defintion from the dataset.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.48\textwidth]{assets/proposed_approach.png}
+  \caption{Overview of the proposed approach for definition modelling with a
+    sample input.}
+  \label{fig:proposed_approach}
 \end{figure}
 
 \section{Experimental Results}
+Due to the lack of quantitative metrics for a classification-based definition
+modelling approach, we simply show some of the best cosine similarity scores for
+predicted embeddings, shown in Figure \ref{fig:best_words}. We also show some
+generated definitions in Figures \ref{fig:generated_definition_1} and
+\ref{fig:generated_definition_2}.
 
+\begin{figure}
+  \centering
+  \includegraphics[width=0.48\textwidth]{assets/best_words.png}
+  \caption{Best cosine similarity scores for the predicted embeddings.}
+  \label{fig:best_words}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.48\textwidth]{assets/dryly_defs.png}
+  \caption{Generated definitions for the word \textit{dryly}.}
+  \label{fig:generated_definition_1}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.48\textwidth]{assets/fabulously_defs.png}
+  \caption{Generated definitions for the word \textit{fabulously}.}
+  \label{fig:generated_definition_2}
+\end{figure}
+
+\FloatBarrier
 \section{Conclusion}
+In this paper, we provided a method of using etymological embeddings instead of
+contextualized embeddings for the problem of definition modelling. However, the
+problem of generating sentences from embeddings is a difficult topic.
+Additionally, due to limited understanding of the author, we use a simplified
+etymological tree rather than the entire structure. The experimental results
+show that the model scores best on adverbs ending in \textit{ly}, and the best
+defintions are all sentences of the form "\textit{In a $\_$ manner.}". This
+shows either a problem with models used or our approach, as the model is stuck
+in a local minima of definitions that are technically similar but not
+necessarily correct to the expected definitions. Future work should address this
+issue by testing strong models, using the entire etymology tree, and using a
+more advanced approach to dataset setup. If these approaches can be tested, we
+believe etymological embeddings have the ability to be as useful as context in
+the task of definition modelling.
 
 \section*{Acknowledgments}
 This work was supported by computational resources provided by the Kennesaw

@@ -60,6 +60,7 @@
 
                 preprint
                 algorithmicx
+                placeins
 
                 # fonts
                 helvetic
